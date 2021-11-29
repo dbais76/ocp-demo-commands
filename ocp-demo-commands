@@ -1,0 +1,76 @@
+
+podman run --name mysql-db registry.redhat.io/rhel8/mysql-80:1
+
+
+podman run --name mysql-basic -e MYSQL_USER=user1 -e MYSQL_PASSWORD=mypa55 -e MYSQL_DATABASE=items -e MYSQL_ROOT_PASSWORD=r00tpa55 -d registry.redhat.io/rhel8/mysql-80:1
+
+podman ps --format="{{.ID}} {{.Names}} {{.Status}}"
+
+podman run --name mysql-2 -it registry.redhat.io/rhel8/mysql-80:1 /bin/bash
+
+
+### Attaching Persistent Storage
+
+mkdir -pv /home/student/local/mysql
+
+### Add the appropriate SELinux context
+sudo semanage fcontext -a -t container_file_t '/home/student/local/mysql(/.*)?'
+sudo restorecon -R /home/student/local/mysql
+ls -ldZ /home/student/local/mysql
+
+### Change the owner of the /home/student/local/mysql
+podman unshare chown 27:27 /home/student/local/mysql
+
+
+### Create a new container specifying the mount point to store the MySQL
+podman run --name persist-db -d -v /home/student/local/mysql:/var/lib/mysql/data -e MYSQL_USER=user1 -e MYSQL_PASSWORD=mypa55 -e MYSQL_DATABASE=items -e MYSQL_ROOT_PASSWORD=r00tpa55 registry.redhat.io/rhel8/mysql-80:1
+
+
+#Verify that the container started correctly.
+
+podman ps --format="{{.ID}} {{.Names}} {{.Status}}"
+
+### Verify that the /home/student/local/mysql directory contains the items directory.
+
+ls -ld /home/student/local/mysql/items
+
+
+
+### OCP Commands
+
+lab authorization-secrets start
+
+### Login to OCP with developer credentials
+oc login -u developer -p developer https://api.ocp4.example.com:6443
+
+### create a new project
+oc new-project developer-mysql-openshift
+
+### using oc new-app command to deploy MySQL DB
+oc new-app --template=mysql-persistent -p MYSQL_USER=user1 -p MYSQL_PASSWORD=mypa55 -p MYSQL_DATABASE=testdb -p  MYSQL_ROOT_PASSWORD=r00tpa55 -p VOLUME_CAPACITY=10Gi
+
+### Check the status of pod
+oc status
+
+oc get pods
+
+oc describe pod <pod-name>
+
+oc get svc
+
+oc describe service mysql
+
+### Port forward to connect to MySQL pod
+oc port-forward <pod-name> 3306:3306
+
+### Open a new terminal and next the next command to connect to MySQL pod using port forward
+mysql -uuser1 -pmypa55 --protocol tcp -h localhost
+
+### run command in MySQL pod to verify
+mysql> show databases;
+
+exit
+
+### Ctrl+C on port forward terminal to close the connection
+### Delete the project
+oc delete project developer-mysql-openshift
