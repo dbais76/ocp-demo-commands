@@ -1,16 +1,22 @@
+### Podman Commands
 
+### This command will fail as we have not provided any environment variables
 podman run --name mysql-db registry.redhat.io/rhel8/mysql-80:1
 
-
+### Run below command to start a MySQL Container
 podman run --name mysql-basic -e MYSQL_USER=user1 -e MYSQL_PASSWORD=mypa55 -e MYSQL_DATABASE=items -e MYSQL_ROOT_PASSWORD=r00tpa55 -d registry.redhat.io/rhel8/mysql-80:1
 
+### Check the status
 podman ps --format="{{.ID}} {{.Names}} {{.Status}}"
+
+### Run new container which will not start default container process
 
 podman run --name mysql-2 -it registry.redhat.io/rhel8/mysql-80:1 /bin/bash
 
 
 ### Attaching Persistent Storage
 
+### Create a new folder
 mkdir -pv /home/student/local/mysql
 
 ### Add the appropriate SELinux context
@@ -35,8 +41,9 @@ podman ps --format="{{.ID}} {{.Names}} {{.Status}}"
 ls -ld /home/student/local/mysql/items
 
 
+############ OCP Commands   ############
 
-### OCP Commands
+## Run lab start command to configure OCP environment
 
 lab authorization-secrets start
 
@@ -73,4 +80,5 @@ exit
 
 ### Ctrl+C on port forward terminal to close the connection
 ### Delete the project
+
 oc delete project developer-mysql-openshift
