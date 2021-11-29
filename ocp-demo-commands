@@ -1,5 +1,11 @@
 ### Podman Commands
 
+### Do podman login to connect to authenticated registry. Login with your Red Hat login credntials
+
+podman login registry.redhat.io
+Username: Enter Red Hat Login
+Password: Login Password
+
 ### This command will fail as we have not provided any environment variables
 podman run --name mysql-db registry.redhat.io/rhel8/mysql-80:1
 
