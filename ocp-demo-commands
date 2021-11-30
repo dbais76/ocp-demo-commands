@@ -24,6 +24,7 @@ podman run --name mysql-2 -it registry.redhat.io/rhel8/mysql-80:1 /bin/bash
 
 ### Create a new folder
 mkdir -pv /home/student/local/mysql
+ls -ldZ /home/student/local/mysql
 
 ### Add the appropriate SELinux context
 sudo semanage fcontext -a -t container_file_t '/home/student/local/mysql(/.*)?'
@@ -88,3 +89,32 @@ exit
 ### Delete the project
 
 oc delete project developer-mysql-openshift
+
+### S2I demo
+
+### create new project
+oc new-project developer-s2i-openshift
+
+### New application using oc new-app command to build and deploy 
+
+oc new-app --name demoapp --as-deployment-config  php:7.3~https://github.com/dbais76/DO180-apps --context-dir php-helloworld -l app=demoapp
+
+### check the status of pods; you will observe Build pod, deploy pod and application pod getting created. Press ctrl+c to exit
+oc get pods -w
+
+### create a route by exposing service
+
+oc expose svc demoapp 
+
+### Get the route name
+
+oc get route
+
+### Curl the route using route from previous command output OR run below command to see the output
+
+firefox $(oc get route/demoapp -o jsonpath='{.spec.host}') &
+
+### This concludes the S2I demo
+
+
+
