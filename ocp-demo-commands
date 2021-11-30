@@ -78,6 +78,7 @@ oc describe service mysql
 oc port-forward <pod-name> 3306:3306
 
 ### Open a new terminal and next the next command to connect to MySQL pod using port forward
+### if mysql command is not available, please install it using "sudo yum install mysql -y"
 mysql -uuser1 -pmypa55 --protocol tcp -h localhost
 
 ### run command in MySQL pod to verify
