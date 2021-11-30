@@ -95,7 +95,7 @@ oc delete project developer-mysql-openshift
 ### create new project
 oc new-project developer-s2i-openshift
 
-### New application using oc new-app command to build and deploy 
+### New application using oc new-app command to build and deploy. We use source code on Git to build the application.
 
 oc new-app --name demoapp --as-deployment-config  php:7.3~https://github.com/dbais76/DO180-apps --context-dir php-helloworld -l app=demoapp
 
