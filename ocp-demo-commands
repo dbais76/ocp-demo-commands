@@ -114,6 +114,8 @@ oc get route
 
 firefox $(oc get route/demoapp -o jsonpath='{.spec.host}') &
 
+oc delete project developer-s2i-openshift
+
 ### This concludes the S2I demo
 
 
